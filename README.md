@@ -16,8 +16,8 @@ Why: the upstream name produces tools like
 `mcp__plugin_chrome-devtools-mcp_chrome-devtools__get_console_message`
 (68 chars), which OpenAI-compatible endpoints reject with
 `400: 'name' must be at most 64 characters`. The fork produces
-`mcp__plugin_cdt_cdt__get_console_message` (43 chars). Longest tool is
-`mcp__plugin_cdt_cdt__performance_analyze_insight` at 47 chars.
+`mcp__plugin_cdt_cdt__get_console_message` (40 chars). Longest tool is
+`mcp__plugin_cdt_cdt__performance_analyze_insight` at 48 chars.
 
 Skills are copied unchanged from upstream v1.9.0 (Apache-2.0, Google Chrome).
 To update: re-copy `skills/` from the upstream release and bump the version
