@@ -6,8 +6,8 @@
     "name": "MotionDevLab",
     "url": "https://github.com/MotionDevLab"
   },
-  "homepage": "https://github.com/MotionDevLab/motiondevlab-plugins",
-  "repository": "https://github.com/MotionDevLab/motiondevlab-plugins",
+  "homepage": "https://github.com/MotionDevLab/claude-code-plugins",
+  "repository": "https://github.com/MotionDevLab/claude-code-plugins",
   "license": "Apache-2.0",
   "keywords": [
     "browser",

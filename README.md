@@ -29,7 +29,7 @@ in `plugins/cdt/.claude-plugin/plugin.json` and
 ## Install (on each machine)
 
 ```
-openclaude plugin marketplace add MotionDevLab/motiondevlab-plugins
+openclaude plugin marketplace add MotionDevLab/claude-code-plugins
 openclaude plugin install cdt@motiondevlab-plugins
 openclaude plugin disable chrome-devtools-mcp@claude-plugins-official
 ```
