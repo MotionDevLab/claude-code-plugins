@@ -1,7 +1,9 @@
-# MotionDevLab OpenClaude Plugins
+# MotionDevLab Claude Plugins
 
-Short-name forks of upstream Claude plugins that exceed the 64-character
-OpenAI-compatible function-name limit once OpenClaude namespaces them as
+Works on Claude Code and OpenClaude.
+
+Short-name forks of upstream Claude plugins that stay under the 64-character
+OpenAI-compatible function-name limit once namespaced as
 `mcp__plugin_<plugin>_<server>__<tool>`.
 
 ## Plugins

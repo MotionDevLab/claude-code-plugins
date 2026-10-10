@@ -5,7 +5,7 @@
     "url": "https://github.com/MotionDevLab"
   },
   "metadata": {
-    "description": "MotionDevLab OpenClaude plugins — short-name forks that stay under the 64-char OpenAI tool-name limit",
+    "description": "Cross-compatible Claude Code + OpenClaude plugins — short-name forks that stay under the 64-char tool-name limit",
     "version": "1.0.0"
   },
   "plugins": [

@@ -1,7 +1,7 @@
 {
   "name": "cdt",
   "version": "1.9.0",
-  "description": "Reliable automation, in-depth debugging, and performance analysis in Chrome using Chrome DevTools and Puppeteer (short-name fork for 64-char tool limit)",
+  "description": "CDT (Chrome DevTools) — reliable automation, in-depth debugging, and performance analysis in Chrome. Short-name fork that stays under the 64-char tool-name limit.",
   "author": {
     "name": "MotionDevLab",
     "url": "https://github.com/MotionDevLab"
