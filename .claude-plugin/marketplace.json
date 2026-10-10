@@ -1,0 +1,19 @@
+{
+  "name": "motiondevlab-plugins",
+  "owner": {
+    "name": "MotionDevLab",
+    "url": "https://github.com/MotionDevLab"
+  },
+  "metadata": {
+    "description": "MotionDevLab OpenClaude plugins — short-name forks that stay under the 64-char OpenAI tool-name limit",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "cdt",
+      "source": "./plugins/cdt",
+      "description": "Chrome DevTools MCP with short server name (cdt) — avoids 400 `name must be at most 64 characters` on OpenAI-compatible endpoints",
+      "version": "1.9.0"
+    }
+  ]
+}
