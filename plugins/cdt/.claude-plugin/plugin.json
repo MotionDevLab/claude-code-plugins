@@ -18,9 +18,9 @@
   ],
   "mcpServers": {
     "cdt": {
-      "command": "npx",
+      "command": "node",
       "args": [
-        "chrome-devtools-mcp@1.9.0"
+        "${CLAUDE_PLUGIN_ROOT}/scripts/cdt-launch.js"
       ]
     }
   }

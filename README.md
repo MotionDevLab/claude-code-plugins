@@ -37,40 +37,35 @@ openclaude plugin disable chrome-devtools-mcp@claude-plugins-official
 Then restart the session and verify with `openclaude mcp list` — the server
 should show as `plugin:cdt:cdt`.
 
-## Windows without Chrome (Edge/Brave only)
+## Browser selection (Chrome / Edge / Brave)
 
-The stock config launches `chrome.exe` via Puppeteer's `--remote-debugging-pipe`.
-A `chrome.exe` shim that re-launches Edge **cannot work**: the CDP pipe transport
-needs CRT fds 3/4 set up by Node/libuv's direct spawn, and any native intermediate
-breaks the mapping (proven across shim v1–v9: handles forwarded correctly, Edge
-still exits 13 in ~70ms). So on a machine with no real Chrome, patch the
-**local installed copy** (not the repo - the repo stays stock for portability)
-with the helper script (idempotent, keeps a `.bak` next to each patched file,
-preserves extra args like `--headless`):
+The plugin boots through `plugins/cdt/scripts/cdt-launch.js`
+(`node ${CLAUDE_PLUGIN_ROOT}/scripts/cdt-launch.js`), which picks a Chromium
+executable at server-start time — no post-install step, survives
+update/reinstall:
 
-```powershell
-.\scripts\patch-cdt-edge.ps1            # auto-detect Edge, patch all cached versions
-.\scripts\patch-cdt-edge.ps1 -ListOnly  # check status without writing
-.\scripts\patch-cdt-edge.ps1 -WhatIf    # preview changes
+1. `$CDT_EXECUTABLE_PATH` if set (explicit override)
+2. Real Google Chrome → stock args, byte-identical to upstream
+3. Microsoft Edge → `--executablePath=<edge>`
+4. Brave → `--executablePath=<brave>`
+
+A `chrome.exe` shim that re-launches Edge **cannot work**: the CDP pipe
+transport needs CRT fds 3/4 set up by Node/libuv's direct spawn, and any
+native intermediate breaks the mapping (proven across shim v1-v9: handles
+forwarded correctly, Edge still exits 13 in ~70ms). The launcher is not such
+an intermediate — it sits *above* chrome-devtools-mcp
+(harness → launcher → npx → browser), and the browser pipes are created by
+chrome-devtools-mcp's own Node process directly. Extra args after the script
+path are forwarded, e.g. `"${CLAUDE_PLUGIN_ROOT}/scripts/cdt-launch.js",
+"--headless"`. Check resolution without launching:
+
+```
+node ${CLAUDE_PLUGIN_ROOT}/scripts/cdt-launch.js --dry-run
 ```
 
-With Brave instead of Edge:
+Verify live with `list_pages` → `navigate_page` → `take_snapshot`.
+Most durable long-term fix: install real per-user Chrome, and the launcher
+takes the stock path untouched.
 
-```powershell
-.\scripts\patch-cdt-edge.ps1 -ExecutablePath "C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe"
-```
-
-Manual equivalent if you prefer to edit by hand:
-
-```jsonc
-// C:\Users\<you>\.openclaude\plugins\cache\motiondevlab-plugins\cdt\1.9.0\.claude-plugin\plugin.json
-"args": [
-  "chrome-devtools-mcp@1.9.0",
-  "--executablePath=C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe"
-]
-```
-
-Then reload plugins and verify with `list_pages` → `navigate_page` →
-`take_snapshot`. Re-apply after every plugin update/reinstall (the cache copy
-gets rewritten). Most durable long-term fix: install real per-user Chrome, and
-the stock config works untouched.
+Legacy: `scripts/patch-cdt-edge.ps1` (manual cache patch) is kept for
+reference but no longer needed.
