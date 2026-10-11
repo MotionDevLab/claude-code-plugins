@@ -44,7 +44,23 @@ A `chrome.exe` shim that re-launches Edge **cannot work**: the CDP pipe transpor
 needs CRT fds 3/4 set up by Node/libuv's direct spawn, and any native intermediate
 breaks the mapping (proven across shim v1–v9: handles forwarded correctly, Edge
 still exits 13 in ~70ms). So on a machine with no real Chrome, patch the
-**local installed copy** (not the repo — the repo stays stock for portability):
+**local installed copy** (not the repo - the repo stays stock for portability)
+with the helper script (idempotent, keeps a `.bak` next to each patched file,
+preserves extra args like `--headless`):
+
+```powershell
+.\scripts\patch-cdt-edge.ps1            # auto-detect Edge, patch all cached versions
+.\scripts\patch-cdt-edge.ps1 -ListOnly  # check status without writing
+.\scripts\patch-cdt-edge.ps1 -WhatIf    # preview changes
+```
+
+With Brave instead of Edge:
+
+```powershell
+.\scripts\patch-cdt-edge.ps1 -ExecutablePath "C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe"
+```
+
+Manual equivalent if you prefer to edit by hand:
 
 ```jsonc
 // C:\Users\<you>\.openclaude\plugins\cache\motiondevlab-plugins\cdt\1.9.0\.claude-plugin\plugin.json
