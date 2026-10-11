@@ -25,6 +25,10 @@
  * Extra CLI args after the script path are forwarded to the server, e.g.
  *   "args": ["${CLAUDE_PLUGIN_ROOT}/scripts/cdt-launch.js", "--headless"]
  *
+ * Privacy default: --no-usage-statistics is always passed (Google collects
+ * usage stats otherwise). Override with CDT_ALLOW_USAGE_STATS=1, or forward
+ * an explicit usage-statistics arg on the command line, which wins.
+ *
  * Diagnostics go to stderr only - stdout is the MCP protocol channel.
  * Zero dependencies (Node builtins only).
  */
@@ -185,10 +189,18 @@ function main() {
   const fwd = process.argv.slice(2).filter((a) => a !== '--dry-run' && a !== '--print-args');
   const wantDryRun = process.argv.slice(2).some((a) => a === '--dry-run' || a === '--print-args');
 
+  // Privacy default: opt out of Google's usage-statistics collection
+  // (the server banner says to run with --no-usage-statistics).
+  // Precedence: explicit fwd arg > env override > default.
+  const hasStatsArg = fwd.some((a) => /usage-statistics/.test(a));
+  const statsArgs =
+    process.env.CDT_ALLOW_USAGE_STATS === '1' ? [] :
+    hasStatsArg ? [] : ['--no-usage-statistics'];
+
   const { exe, serverArgs } = resolve();
 
   if (wantDryRun) {
-    console.log(JSON.stringify({ package: PACKAGE, executable: exe, args: [...serverArgs, ...fwd], platform: process.platform }));
+    console.log(JSON.stringify({ package: PACKAGE, executable: exe, args: [...serverArgs, ...statsArgs, ...fwd], platform: process.platform }));
     process.exit(exe ? 0 : 1);
     return;
   }
@@ -203,8 +215,8 @@ function main() {
     return;
   }
 
-  console.error(`[cdt-launch] browser: ${exe}`);
-  const child = spawnNpx([...serverArgs, ...fwd]);
+  console.error(`[cdt-launch] browser: ${exe}${statsArgs.length ? '' : ' (usage stats: user-overridden)'}`);
+  const child = spawnNpx([...serverArgs, ...statsArgs, ...fwd]);
   child.on('error', (err) => {
     console.error(`[cdt-launch] failed to spawn npx: ${err && err.message ? err.message : err}`);
     process.exit(1);
