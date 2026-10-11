@@ -8,7 +8,7 @@ OpenAI-compatible function-name limit once namespaced as
 
 ## Plugins
 
-### cdt (v1.9.0)
+### cdt (v1.10.1)
 
 Fork of
 [ChromeDevTools/chrome-devtools-mcp](https://github.com/ChromeDevTools/chrome-devtools-mcp)
@@ -21,7 +21,7 @@ Why: the upstream name produces tools like
 `mcp__plugin_cdt_cdt__get_console_message` (40 chars). Longest tool is
 `mcp__plugin_cdt_cdt__performance_analyze_insight` at 48 chars.
 
-Skills are copied unchanged from upstream v1.9.0 (Apache-2.0, Google Chrome).
+Skills are copied from upstream v1.10.1 (Apache-2.0, Google Chrome) with one localization: the extension-setup example uses the `cdt` server name.
 To update: re-copy `skills/` from the upstream release and bump the version
 in `plugins/cdt/.claude-plugin/plugin.json` and
 `.claude-plugin/marketplace.json`.

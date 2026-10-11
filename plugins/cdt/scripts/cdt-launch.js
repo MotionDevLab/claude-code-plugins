@@ -41,7 +41,7 @@ const path = require('node:path');
 
 // Pinned to the vendored upstream release. Override for testing via:
 //   CDT_PACKAGE=chrome-devtools-mcp@latest
-const PACKAGE = process.env.CDT_PACKAGE || 'chrome-devtools-mcp@1.9.0';
+const PACKAGE = process.env.CDT_PACKAGE || 'chrome-devtools-mcp@1.10.1';
 
 function exists(p) {
   try {

@@ -13,7 +13,7 @@
       "name": "cdt",
       "source": "./plugins/cdt",
       "description": "Chrome DevTools MCP with short server name (cdt) — avoids 400 `name must be at most 64 characters` on OpenAI-compatible endpoints",
-      "version": "1.9.0"
+      "version": "1.10.1"
     }
   ]
 }
