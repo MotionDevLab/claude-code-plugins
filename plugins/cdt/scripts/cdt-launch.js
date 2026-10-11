@@ -135,6 +135,52 @@ function resolve() {
   return { exe, serverArgs };
 }
 
+// Locate npm's npx-cli.js so we can run it directly under node with
+// shell:false. Spawning the npx.cmd shim needs shell:true on Windows,
+// and cmd.exe then concatenates argv with bare spaces - any arg with a
+// space (e.g. --executablePath=C:/Program Files .../msedge.exe) gets
+// split, and the server sees a truncated path (proven in smoke test:
+// "Browser was not found at the configured executablePath (C:/Program)").
+// Direct node keeps argv exact and also silences the DEP0190 warning.
+function findNpxCli() {
+  const cands = [];
+  try {
+    cands.push(
+      path.join(path.dirname(process.execPath), 'node_modules', 'npm', 'bin', 'npx-cli.js')
+    );
+  } catch {
+    /* ignore */
+  }
+  if (process.env.APPDATA) {
+    cands.push(
+      path.join(process.env.APPDATA, 'npm', 'node_modules', 'npm', 'bin', 'npx-cli.js')
+    );
+  }
+  return cands.find(exists) || null;
+}
+
+// Quote one argv element for cmd.exe /d /s /c concatenation.
+function quoteWinArg(a) {
+  if (!/[\s\t\n\v"<>|&()^%!`]/.test(a)) return a;
+  return '"' + String(a).replace(/(\\*)"/g, '$1$1\\"') + '"';
+}
+
+// Spawn npx with argv preserved exactly on every platform.
+function spawnNpx(args) {
+  const stdioOpts = { stdio: 'inherit', windowsHide: false };
+  if (process.platform === 'win32') {
+    const cli = findNpxCli();
+    if (cli) {
+      console.error(`[cdt-launch] npx via: ${cli}`);
+      return spawn(process.execPath, [cli, ...args], { ...stdioOpts, shell: false });
+    }
+    // Fallback: pre-quote, since shell:true joins with bare spaces.
+    const line = ['npx', ...args.map(quoteWinArg)].join(' ');
+    return spawn(line, { ...stdioOpts, shell: true });
+  }
+  return spawn('npx', args, { ...stdioOpts, shell: false });
+}
+
 function main() {
   const fwd = process.argv.slice(2).filter((a) => a !== '--dry-run' && a !== '--print-args');
   const wantDryRun = process.argv.slice(2).some((a) => a === '--dry-run' || a === '--print-args');
@@ -158,7 +204,7 @@ function main() {
   }
 
   console.error(`[cdt-launch] browser: ${exe}`);
-  const child = spawn('npx', [...serverArgs, ...fwd], { stdio: 'inherit', shell: process.platform === 'win32', windowsHide: false });
+  const child = spawnNpx([...serverArgs, ...fwd]);
   child.on('error', (err) => {
     console.error(`[cdt-launch] failed to spawn npx: ${err && err.message ? err.message : err}`);
     process.exit(1);
